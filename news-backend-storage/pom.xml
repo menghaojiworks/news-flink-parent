@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.honglu.headline</groupId>
+    <artifactId>news-flink-parent</artifactId>
+    <version>1.4.0</version>
+	  <relativePath>..</relativePath>
+  </parent>
+  <artifactId>news-backend-storage</artifactId>
+  <version>1.4.0</version>
+  <packaging>war</packaging>
+  <name>news-backend-storage Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+	<dependencies>
+		<!-- spring-webmvc -->
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-webmvc</artifactId>
+    		<version>4.3.13.RELEASE</version>
+		</dependency>
+
+		<!-- slf4j -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		
+		<!-- xxl-job-core -->
+		<dependency>
+			<groupId>com.xuxueli</groupId>
+			<artifactId>xxl-job-core</artifactId>
+			<version>1.9.0</version>
+		</dependency>
+		
+		<!-- redis cache related.....start -->  
+		<dependency>  
+    		<groupId>redis.clients</groupId>  
+    		<artifactId>jedis</artifactId>  
+    		<version>2.7.3</version>  
+		</dependency>  
+		<!-- redis cache related.....end --> 
+		<dependency>
+      		<groupId>commons-lang</groupId>
+      		<artifactId>commons-lang</artifactId>
+      		<version>2.3</version>
+ 		</dependency> 
+ 		<!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+		<dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>2.4</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+		<dependency>
+    		<groupId>com.alibaba</groupId>
+    		<artifactId>fastjson</artifactId>
+    		<version>1.2.44</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>4.0.6.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.38</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+		<dependency>
+    		<groupId>com.alibaba</groupId>
+    		<artifactId>druid</artifactId>
+    		<version>1.1.6</version>
+		</dependency>
+        
+        
+	</dependencies>
+  <build>
+    <finalName>news-backend-storage</finalName>
+  </build>
+</project>

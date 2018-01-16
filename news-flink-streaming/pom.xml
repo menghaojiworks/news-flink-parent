@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.honglu.headline</groupId>
+		<artifactId>news-flink-parent</artifactId>
+		<version>1.4.0</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>news-flink-streaming</artifactId>
+	<name>news-flink-streaming</name>
+
+	<packaging>jar</packaging>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<classifier>jdk15</classifier>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-clients_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- Add a logging Framework, to make the examples produce -->
+		<!--             logs when executing in the IDE            -->
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-scala_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.aliyun.openservices</groupId>
+			<artifactId>aliyun-openservices</artifactId>
+			<version>OTS-2.0.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.aliyun.oss</groupId>
+			<artifactId>aliyun-sdk-oss</artifactId>
+			<version>2.3.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-twitter_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-rabbitmq_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-connector-kafka-0.10_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-shaded-jackson</artifactId>
+		</dependency>
+
+		<!-- test dependencies -->
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-test-utils_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.flink</groupId>
+			<artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+
+		<dependency>
+		   <groupId>net.sf.ezmorph</groupId>
+		   <artifactId>ezmorph</artifactId>
+	    </dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+
+        <!-- freemarker dependency -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>4.3.9.RELEASE</version>
+		</dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+
+    </dependencies>
+    <profiles>
+		<!--<profile>-->
+		<!--<id>WordCount</id>-->
+
+		<!--<build>-->
+		<!--<plugins>-->
+		<!--<plugin>-->
+		<!--<groupId>org.apache.maven.plugins</groupId>-->
+		<!--<artifactId>maven-jar-plugin</artifactId>-->
+		<!--<version>2.4</version>&lt;!&ndash;$NO-MVN-MAN-VER$&ndash;&gt;-->
+		<!--<executions>-->
+
+		<!--<execution>-->
+		<!--<id>WordCount</id>-->
+		<!--<phase>package</phase>-->
+		<!--<goals>-->
+		<!--<goal>jar</goal>-->
+		<!--</goals>-->
+		<!--<configuration>-->
+		<!--<classifier>WordCount</classifier>-->
+
+		<!--<archive>-->
+		<!--<manifestEntries>-->
+		<!--<program-class>com.xiaoniu.news.wordcount.WordCount</program-class>-->
+		<!--</manifestEntries>-->
+		<!--</archive>-->
+
+		<!--<includes>-->
+		<!--<include>com/xiaoniu/news/wordcount/WordCount.class</include>-->
+		<!--<include>com/xiaoniu/news/wordcount/WordCount$*.class</include>-->
+		<!--<include>com/xiaoniu/news/wordcount/util/WordCountData.class</include>-->
+		<!--</includes>-->
+		<!--</configuration>-->
+		<!--</execution>-->
+		<!--</executions>-->
+		<!--</plugin>-->
+		<!--</plugins>-->
+		<!--</build>-->
+		<!--</profile>-->
+
+	<profile>
+		<id>NewsInfo</id>
+		<activation>
+			<activeByDefault>true</activeByDefault>
+		</activation>
+		<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.9</version><!--$NO-MVN-MAN-VER$-->
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<!-- For WordCount example data -->
+								<artifactItem>
+									<groupId>org.apache.flink</groupId>
+									<artifactId>flink-examples-batch_${scala.binary.version}</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+									<includes>org/apache/flink/streaming/examples/wordcount/util/WordCountData.class</includes>
+								</artifactItem>
+								<!-- For JSON utilities -->
+								<artifactItem>
+									<groupId>org.apache.flink</groupId>
+									<artifactId>flink-connector-twitter_${scala.binary.version}</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+									<includes>org/apache/flink/streaming/connectors/json/*</includes>
+								</artifactItem>
+                                <!--add rmq dependency -->
+								<artifactItem>
+									<groupId>org.apache.flink</groupId>
+									<artifactId>flink-connector-rabbitmq_${scala.binary.version}</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>com.rabbitmq</groupId>
+									<artifactId>amqp-client</artifactId>
+									<version>4.2.0</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>net.sf.json-lib</groupId>
+									<artifactId>json-lib</artifactId>
+									<classifier>jdk15</classifier>
+									<version>2.4</version>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>commons-lang</groupId>
+									<artifactId>commons-lang</artifactId>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+
+								<artifactItem>
+									<groupId>commons-beanutils</groupId>
+									<artifactId>commons-beanutils</artifactId>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>commons-collections</groupId>
+									<artifactId>commons-collections</artifactId>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+                                <artifactItem>
+                                    <groupId>commons-codec</groupId>
+                                    <artifactId>commons-codec</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                                </artifactItem>
+
+								<artifactItem>
+									<groupId>net.sf.ezmorph</groupId>
+									<artifactId>ezmorph</artifactId>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.freemarker</groupId>
+									<artifactId>freemarker</artifactId>
+									<type>jar</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>commons-logging</groupId>
+									<artifactId>commons-logging</artifactId>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}/classes</outputDirectory>
+								</artifactItem>
+
+                                <artifactItem>
+                                    <groupId>com.aliyun.openservices</groupId>
+                                    <artifactId>aliyun-openservices</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+                                    <groupId>com.aliyun.oss</groupId>
+                                    <artifactId>aliyun-sdk-oss</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpclient</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                                </artifactItem>
+
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpcore</artifactId>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                                </artifactItem>
+
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- self-contained jars for each example -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version><!--$NO-MVN-MAN-VER$-->
+				<executions>
+					<!-- NewsInfo -->
+					<execution>
+						<id>NewsInfo</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+                            <finalName>Flink_NewsInfo</finalName>
+							<archive>
+								<manifestEntries>
+									<program-class>com.xiaoniu.news.rabbitmq.NewsInfoCollector</program-class>
+								</manifestEntries>
+							</archive>
+							<includes>
+								<include>com/xiaoniu/news/**/*.class</include>
+								<include>org/apache/flink/streaming/connectors/**/*</include>
+								<include>org/apache/commons/**/*</include>
+								<include>net/sf/**/*.class</include>
+								<include>com/rabbitmq/**/*</include>
+								<include>freemarker/**/*</include>
+								<include>*.properties</include>
+                                <include>template/**/*</include>
+                                <include>com/aliyun/**/*</include>
+                                <include>org/apache/http/**/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	</profile>
+	</profiles>
+</project>

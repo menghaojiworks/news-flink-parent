@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.3.2.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.honglu.headline</groupId>
+	<artifactId>news-flink-parent</artifactId>
+	<version>1.4.0</version>
+	<name>news-flink-parent</name>
+	<packaging>pom</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<hadoop.version>2.4.1</hadoop.version>
+		<!-- Need to use a user property here because the surefire
+			 forkCount is not exposed as a property. With this we can set
+			 it on the "mvn" commandline in travis. -->
+		<flink.forkCount>1C</flink.forkCount>
+		<!-- Allow overriding the fork behaviour for the expensive tests in flink-tests
+			 to avoid process kills due to container limits on TravisCI -->
+		<flink.forkCountTestPackage>${flink.forkCount}</flink.forkCountTestPackage>
+		<flink.reuseForks>true</flink.reuseForks>
+		<log4j.configuration>log4j-test.properties</log4j.configuration>
+		<flink.shaded.version>2.0</flink.shaded.version>
+		<guava.version>18.0</guava.version>
+		<akka.version>2.4.20</akka.version>
+		<java.version>1.8</java.version>
+		<slf4j.version>1.7.7</slf4j.version>
+		<log4j.version>1.2.17</log4j.version>
+		<!-- Overwrite default values from parent pom.
+			 Intellij is (sometimes?) using those values to choose target language level
+			 and thus is changing back to java 1.6 on each maven re-import -->
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<scala.macros.version>2.1.0</scala.macros.version>
+		<!-- Default scala versions, may be overwritten by build profiles -->
+		<scala.version>2.11.12</scala.version>
+		<scala.binary.version>2.11</scala.binary.version>
+		<chill.version>0.7.4</chill.version>
+		<zookeeper.version>3.4.10</zookeeper.version>
+		<curator.version>2.12.0</curator.version>
+		<jackson.version>2.7.9</jackson.version>
+		<metrics.version>3.1.5</metrics.version>
+		<prometheus.version>0.0.26</prometheus.version>
+		<avro.version>1.8.2</avro.version>
+		<junit.version>4.12</junit.version>
+		<mockito.version>1.10.19</mockito.version>
+		<powermock.version>1.6.5</powermock.version>
+		<hamcrest.version>1.3</hamcrest.version>
+		<japicmp.skip>false</japicmp.skip>
+		<!--
+			Keeping the MiniKDC version fixed instead of taking hadoop version dependency
+			to support testing Kafka, ZK etc., modules that does not have Hadoop dependency
+			Starting Hadoop 3, org.apache.kerby will be used instead of MiniKDC. We may have
+			to revisit the impact at that time.
+		-->
+		<minikdc.version>2.7.2</minikdc.version>
+		<generated.docs.dir>./docs/_includes/generated</generated.docs.dir>
+		<freemarker.version>2.3.23</freemarker.version>
+	</properties>
+
+
+
+
+	<dependencyManagement>
+		<!-- WARN:
+			DO NOT put 	guava,
+						protobuf,
+						asm,
+						netty
+					here. It will overwrite Hadoop's guava dependency (even though we handle it
+			separatly in the flink-shaded-hadoop module).
+		-->
+		<dependencies>
+
+			<dependency>
+				<groupId>org.apache.flink</groupId>
+				<artifactId>flink-shaded-asm</artifactId>
+				<version>5.0.4-${flink.shaded.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.flink</groupId>
+				<artifactId>flink-shaded-guava</artifactId>
+				<version>18.0-${flink.shaded.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.flink</groupId>
+				<artifactId>flink-shaded-jackson</artifactId>
+				<version>${jackson.version}-${flink.shaded.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.flink</groupId>
+				<artifactId>flink-shaded-netty</artifactId>
+				<!-- Don't upgrade for now. Netty versions >= 4.0.28.Final
+				contain an improvement by Netty, which slices a Netty buffer
+				instead of doing a memory copy [1] in the
+				LengthFieldBasedFrameDecoder. In some situations, this
+				interacts badly with our Netty pipeline leading to OutOfMemory
+				errors.
+
+				[1] https://github.com/netty/netty/issues/3704 -->
+				<version>4.0.27.Final-${flink.shaded.version}</version>
+			</dependency>
+
+			<!-- This manages the 'javax.annotation' annotations (JSR305) -->
+			<dependency>
+				<groupId>com.google.code.findbugs</groupId>
+				<artifactId>jsr305</artifactId>
+				<version>1.3.9</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.3.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.xerial.snappy</groupId>
+				<artifactId>snappy-java</artifactId>
+				<version>1.1.1.3</version>
+			</dependency>
+
+			<!-- Make sure we use a consistent avro version between Flink and Hadoop -->
+			<dependency>
+				<groupId>org.apache.avro</groupId>
+				<artifactId>avro</artifactId>
+				<version>${avro.version}</version>
+			</dependency>
+
+			<!-- For dependency convergence -->
+			<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-core</artifactId>
+				<version>${hamcrest.version}</version>
+			</dependency>
+
+			<!-- For dependency convergence -->
+			<dependency>
+				<groupId>org.objenesis</groupId>
+				<artifactId>objenesis</artifactId>
+				<version>2.1</version>
+			</dependency>
+
+			<!-- For dependency convergence -->
+			<dependency>
+				<groupId>com.typesafe</groupId>
+				<artifactId>config</artifactId>
+				<version>1.3.0</version>
+			</dependency>
+
+			<!-- For dependency convergence -->
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>1.1.3</version>
+			</dependency>
+
+			<!-- For dependency convergence -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+			</dependency>
+
+			<!-- For dependency convergence -->
+			<dependency>
+				<groupId>org.tukaani</groupId>
+				<artifactId>xz</artifactId>
+				<version>1.5</version>
+			</dependency>
+
+			<!-- Make sure we use a consistent commons-cli version throughout the project -->
+			<dependency>
+				<groupId>commons-cli</groupId>
+				<artifactId>commons-cli</artifactId>
+				<version>1.3.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.4</version>
+			</dependency>
+
+			<!-- commons collections needs to be pinned to this critical security fix version -->
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.2</version>
+			</dependency>
+
+			<!-- common-beanutils-bean-collections is used by flink-shaded-hadoop2 -->
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils-bean-collections</artifactId>
+				<version>1.8.3</version>
+			</dependency>
+
+			<!--We have to bump the commons-configuration to version 1.7 because Hadoop uses per
+			default 1.6. This version has the problem that it depends on commons-beanutils-core and
+			commons-digester. Commons-digester depends on commons-beanutils. Both dependencies are
+			contains classes of commons-collections. Since the dependency reduced pom does not
+			exclude commons-beanutils from commons-configuration, sbt would pull it in again. The
+			solution is setting the version of commons-configuration to 1.7 which also depends on
+			common-beanutils. Consequently, the dependency reduced pom will also contain an
+			exclusion for commons-beanutils for commons-configuration. -->
+			<dependency>
+				<groupId>commons-configuration</groupId>
+				<artifactId>commons-configuration</artifactId>
+				<version>1.7</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.10</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-math3</artifactId>
+				<version>3.5</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.4.1</version>
+			</dependency>
+
+			<!-- Managed dependency required for HBase in flink-hbase -->
+			<dependency>
+				<groupId>org.javassist</groupId>
+				<artifactId>javassist</artifactId>
+				<version>3.18.2-GA</version>
+			</dependency>
+
+			<!-- joda time is pulled in different versions by different transitive dependencies-->
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.5</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.joda</groupId>
+				<artifactId>joda-convert</artifactId>
+				<version>1.7</version>
+			</dependency>
+
+			<!-- kryo used in different versions by Flink an chill -->
+			<dependency>
+				<groupId>com.esotericsoftware.kryo</groupId>
+				<artifactId>kryo</artifactId>
+				<version>2.24.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-library</artifactId>
+				<version>${scala.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-reflect</artifactId>
+				<version>${scala.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.scala-lang</groupId>
+				<artifactId>scala-compiler</artifactId>
+				<version>${scala.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.clapper</groupId>
+				<artifactId>grizzled-slf4j_${scala.binary.version}</artifactId>
+				<version>1.0.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-actor_${scala.binary.version}</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-remote_${scala.binary.version}</artifactId>
+				<version>${akka.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>io.aeron</groupId>
+						<artifactId>aeron-driver</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.aeron</groupId>
+						<artifactId>aeron-client</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- Transitive dependency of akka-remote that we explicitly define to keep it
+                visible after the shading (without relocation!) of akka-remote -->
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-stream_${scala.binary.version}</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+
+			<!-- Transitive dependency of akka-remote that we explicitly define to keep it
+                visible after the shading (without relocation!) of akka-remote -->
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-protobuf_${scala.binary.version}</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-slf4j_${scala.binary.version}</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-camel_${scala.binary.version}</artifactId>
+				<version>${akka.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.typesafe.akka</groupId>
+				<artifactId>akka-testkit_${scala.binary.version}</artifactId>
+				<version>${akka.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.scalatest</groupId>
+				<artifactId>scalatest_${scala.binary.version}</artifactId>
+				<version>2.2.2</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>com.github.scopt</groupId>
+				<artifactId>scopt_${scala.binary.version}</artifactId>
+				<version>3.5.0</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.scala-lang</groupId>
+						<artifactId>scala-library</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.zookeeper</groupId>
+				<artifactId>zookeeper</artifactId>
+				<version>${zookeeper.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+					</exclusion>
+					<!-- Netty is only needed for ZK servers, not clients -->
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty</artifactId>
+					</exclusion>
+					<!-- jline is optional for ZK console shell -->
+					<exclusion>
+						<groupId>jline</groupId>
+						<artifactId>jline</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- We have to define the versions for httpcore and httpclient here such that a consistent
+			 version is used by the shaded hadoop jars and the flink-yarn-test project because of MNG-5899.
+
+			 See FLINK-6836 for more details -->
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>4.4.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.5.3</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections</artifactId>
+				<version>0.9.10</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.json-lib</groupId>
+				<artifactId>json-lib</artifactId>
+				<version>2.4</version>
+				<classifier>jdk15</classifier>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>1.9.3</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.10</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.ezmorph</groupId>
+				<artifactId>ezmorph</artifactId>
+				<version>1.0.6</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>1.1.3</version>
+			</dependency>
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>${freemarker.version}</version>
+            </dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<modules>
+		<module>news-flink-streaming</module>
+		<module>news-backend-api</module>
+		<module>news-backend-facade</module>
+		<module>news-backend-storage</module>
+  </modules>
+
+</project>
